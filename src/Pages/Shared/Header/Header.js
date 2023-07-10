@@ -7,11 +7,17 @@ import LeftSideNav from '../LeftSideNav/LeftSideNav';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
 import { FaUser } from 'react-icons/fa';
-import { Image } from 'react-bootstrap';
+import { Button, Image } from 'react-bootstrap';
 
 const Header = () => {
 
-    const { user } = useContext(AuthContext);
+    const { user, logOut } = useContext(AuthContext);
+
+    const handleLogOut = () => {
+        logOut()
+            .then(() => { })
+            .catch(err => console.error(err))
+    }
 
     return (
         <div>
@@ -36,14 +42,28 @@ const Header = () => {
                             </NavDropdown>
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#">{user?.displayName}</Nav.Link>
-                            <Nav.Link eventKey={2} href="#memes">
+                            <Nav.Link href="#">
                                 {
-                                    user.photoURL ?
+                                    user?.uid ?
+                                        <>
+                                            <Button onClick={handleLogOut} className='me-1' variant='danger'>Logout</Button>
+                                            <span>{user?.displayName}</span>
+                                        </>
+                                        :
+                                        <>
+                                            <Link to='/login'><Button variant='secondary' className='me-2'>Login</Button></Link>
+                                            <Link to='/register'><Button variant='info'>Register</Button></Link>
+                                        </>
+                                }
+
+                            </Nav.Link>
+                            <Nav.Link eventKey={2} href="#">
+                                {
+                                    user?.photoURL ?
                                         <Image
                                             style={{ height: '30px' }}
                                             roundedCircle
-                                            src={user.photoURL}>
+                                            src={user?.photoURL}>
                                         </Image>
                                         :
                                         <FaUser></FaUser>
